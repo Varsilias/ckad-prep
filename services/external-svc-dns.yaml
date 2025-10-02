@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: externalsvc-dns
+spec:
+  externalName: bar.com
+  type: ExternalName
+
+#kubectl create service externalname externalsvc-dns --external-name bar.com -o yaml --dry-run=client > external-svc-dns.yaml

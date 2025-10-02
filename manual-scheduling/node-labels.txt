@@ -1,0 +1,29 @@
+// kubectl get nodes --show-labels
+
+NAME           STATUS   ROLES           AGE   VERSION   LABELS
+minikube       Ready    control-plane   8d    v1.33.1   
+beta.kubernetes.io/arch=arm64,
+beta.kubernetes.io/os=linux,
+kubernetes.io/arch=arm64,
+kubernetes.io/hostname=minikube,
+kubernetes.io/os=linux,
+minikube.k8s.io/commit=f8f52f5de11fc6ad8244afac475e1d0f96841df1,
+minikube.k8s.io/name=minikube,
+minikube.k8s.io/primary=true,
+minikube.k8s.io/updated_at=2025_09_08T12_23_37_0700,
+minikube.k8s.io/version=v1.36.0,
+node-role.kubernetes.io/control-plane=,
+node.kubernetes.io/exclude-from-external-load-balancers=
+
+
+minikube-m02   Ready    <none>          8d    v1.33.1   
+beta.kubernetes.io/arch=arm64,
+beta.kubernetes.io/os=linux,
+kubernetes.io/arch=arm64,
+kubernetes.io/hostname=minikube-m02,
+kubernetes.io/os=linux,
+minikube.k8s.io/commit=f8f52f5de11fc6ad8244afac475e1d0f96841df1,
+minikube.k8s.io/name=minikube,
+minikube.k8s.io/primary=false,
+minikube.k8s.io/updated_at=2025_09_08T12_24_18_0700,
+minikube.k8s.io/version=v1.36.0

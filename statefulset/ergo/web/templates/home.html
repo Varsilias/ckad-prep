@@ -1,0 +1,36 @@
+{{define "body"}}
+<div class="w-full">
+    <form 
+        id="todo-form" 
+        hx-post="/ui/todo" 
+        hx-target="#todos" 
+        hx-swap="beforeend" 
+        hx-indicator="#sending"
+        hx-on="todoAdded: this.reset()"
+        class="border-b border-gray-500 pb-4"
+        >
+        <div for="todo_title" class="border border-gray-50 py-2 px-4 rounded-md bg-slate-500">
+            <input
+                 type="text"
+                 name="todo_title" 
+                 id="todo_title" 
+                 placeholder="Enter Todo..."
+                 class="focus:outline-none w-full py-2 placeholder:text-gray-100 text-gray-100"
+                >
+        </div>
+        <button type="submit" class="mt-4 bg-blue-500 py-2 px-8 rounded-sm text-white">Add</button>
+        <span id="sending" class="htmx-indicator text-sm text-slate-500">…sending</span>
+    </form>
+
+    <section id="todos" class="flex-1 overflow-y-auto space-y-3 pr-1 mt-4">
+        <h1>TodoList</h1>
+         {{range .Todos}}
+        {{template "todo.html" .}}
+        {{end}}     
+    </section>
+</div>
+{{end}}
+
+{{define "home.html"}}
+    {{template "layout" .}}
+{{end}}

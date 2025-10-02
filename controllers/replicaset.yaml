@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: web-rs
+  labels:
+    app: web
+    tier: backend
+spec:
+  replicas: 6
+  selector:
+    matchExpressions:
+      - {key: app, operator: In, values: [web, env]}
+    # matchLabels:
+    #   app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+        - name: web
+          image: varsilias/go-ms:distroless
+          ports:
+            - containerPort: 80

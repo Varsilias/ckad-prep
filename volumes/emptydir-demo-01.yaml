@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: nginx
+  name: nginx
+spec:
+  volumes:
+    - name: scratch
+      emptyDir: {}
+  containers:
+  - image: nginx
+    name: nginx
+    volumeMounts:
+      - name: scratch
+        mountPath: /app
+    resources: {}

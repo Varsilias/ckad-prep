@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-cm
+data:
+  custom-nginx.conf: |
+    server {
+        listen       8080
+        server_name  ""
+        location / {
+            root    /usr/share/nginx/html
+            index   index.html index.htm
+        }
+    }
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  labels:
+    app: nginx
+spec:
+  containers:
+  - image: nginx
+    name: nginx
+    volumeMounts:
+      - name: config-vol
+        mountPath: /etc/nginx/conf.d
+    ports:
+    - containerPort: 8080
+    resources: {}
+  restartPolicy: Always
+  volumes:
+    - name: config-vol
+      configMap:
+        name: nginx-cm
+        items:
+          - key: custom-nginx.conf
+            path: default.conf
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+     app.kubernetes.io/name: nginx
+  name: nginx
+spec:
+  ports:
+  - port: 8080
+    targetPort: 8080
+    nodePort: 31000
+  selector:
+    app.kubernetes.io/name: nginx
+  type: NodePort

@@ -1,0 +1,18 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: counter-job
+spec:
+  # completions: 5
+  completions: 10
+  parallelism: 5
+  # backoffLimit: 5 # when completion is set, backoffLimit is calculated based on the number of failed Pods before the Job is marked as failed
+  template:
+    spec:
+      containers:
+      - image: busybox
+        name: counter-job
+        command: ["/bin/sh"]
+        args: ["-c", 'num=$(( $RANDOM % 10 )); if [ `expr $num % 2` -eq 0 ]; then echo "positive"; exit 0; else echo "negative"; exit 1; fi']
+        resources: {}
+      restartPolicy: Never

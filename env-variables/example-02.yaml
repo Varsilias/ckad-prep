@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox
+spec:
+  containers:
+  - image: busybox:latest
+    name: busybox
+    command:
+      - /bin/sh
+      - -c
+      - |
+        echo "POD WILL GET: $CPU_REQUEST CPU"
+        echo "POD CAN'T REQUEST MORE THAN: $CPU_LIMIT CPU"
+        echo "POD WILL GET: $MEM_REQUEST Memory"
+        echo "POD CAN'T REQUEST MORE THAN: $MEM_LIMIT Memory"
+    ports:
+    - containerPort: 80
+    env:
+      - name: CPU_REQUEST
+        valueFrom:
+         resourceFieldRef:
+           containerName: busybox
+           resource: requests.cpu
+      - name: CPU_LIMIT
+        valueFrom:
+          resourceFieldRef:
+           containerName: busybox
+           resource: limits.cpu
+      - name: MEM_REQUEST
+        valueFrom:
+         resourceFieldRef:
+           containerName: busybox
+           resource: requests.memory
+      - name: MEM_LIMIT
+        valueFrom:
+          resourceFieldRef:
+           containerName: busybox
+           resource: limits.memory
+    resources:
+      requests:
+        memory: 32Mi
+        cpu: 125m
+      limits:
+        memory: 64Mi
+        cpu: 250m

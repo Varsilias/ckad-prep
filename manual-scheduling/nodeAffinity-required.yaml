@@ -1,0 +1,26 @@
+#  k get nodes -l 'gpu in (amd,intel)'
+# NAME           STATUS   ROLES    AGE   VERSION
+# minikube-m02   Ready    <none>   8d    v1.33.1
+# minikube-m04   Ready    <none>   62m   v1.33.1
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+  - image: nginx:latest
+    name: nginx
+    ports:
+    - containerPort: 80
+    resources: {}
+  affinity:
+    nodeAffinity: 
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+            - key: gpu
+              operator: In
+              values:
+                - amd
+                - intel

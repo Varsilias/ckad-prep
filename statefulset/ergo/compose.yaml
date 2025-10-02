@@ -1,0 +1,18 @@
+version: "3.9"
+services:
+  db:
+    image: mysql:8.0
+    container_name: ergo_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ergo
+      MYSQL_PASSWORD: P@ssword1234
+      MYSQL_USER: Ergo
+    ports:
+      - "33060:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+
+volumes:
+  dbdata:
+# mysql://Ergo:P@ssword1234@localhost:33060/ergo

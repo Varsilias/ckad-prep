@@ -1,0 +1,13 @@
+# keys set to empty by default mean "true"
+
+beta.kubernetes.io/arch=arm64
+beta.kubernetes.io/os=linux
+kubernetes.io/arch=arm64
+kubernetes.io/hostname=minikube
+kubernetes.io/os=linux
+minikube.k8s.io/commit=f8f52f5de11fc6ad8244afac475e1d0f96841df1
+minikube.k8s.io/name=minikube,minikube.k8s.io/primary=true
+minikube.k8s.io/updated_at=2025_08_22T06_01_49_0700
+minikube.k8s.io/version=v1.36.0
+node-role.kubernetes.io/control-plane=
+node.kubernetes.io/exclude-from-external-load-balancers=

@@ -1,0 +1,5 @@
+*.exe
+geometry/
+static/
+go-app/
+kubernetes/

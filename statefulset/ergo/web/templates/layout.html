@@ -1,0 +1,25 @@
+{{define "layout"}}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ergo - The Task Manager of the Future</title>
+    <link href="/static/dist/app.css" rel="stylesheet" />
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+</head>
+
+<body>
+    <header id="intro" class="flex justify-center items-center text-center  p-6 rounded-b-lg shadow">
+        {{template "header.html" .}}
+    </header>
+    <main class="p-4 md:p-8 flex justify-center w-full">
+        {{template "body" .}}
+    </main>
+    <footer class="flex justify-center items-center text-center w-full">
+        {{template "footer.html" .}}
+    </footer>
+</body>
+</html>
+{{end}}

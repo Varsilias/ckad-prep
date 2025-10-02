@@ -1,0 +1,19 @@
+{
+  "name": "ergo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "tw:build": "tailwindcss -i ./web/static/src/input.css -o ./web/static/dist/app.css --watch",
+    "tw:prod": "tailwindcss -i ./web/static/src/input.css -o ./web/static/dist/app.css --minify"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@tailwindcss/cli": "^4.1.13",
+    "@tailwindcss/typography": "^0.5.19",
+    "tailwindcss": "^4.1.13"
+  }
+}

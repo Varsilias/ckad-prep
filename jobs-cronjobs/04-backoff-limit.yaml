@@ -1,0 +1,18 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: counter-job
+spec:
+  # restartPolicy of "OnFailure" will cause the same pod to be restarted twice when it fails before being marked as failed
+  # restartPolicy of "Never" will cause 2  pod to be created for each failure before being marked as failed
+  backoffLimit: 2
+  template:
+    spec:
+      containers:
+      - image: busybox
+        name: counter-job
+        command: ["/bin/sh"]
+        args: ["-c", 'exit 1', 'for num in 10 9 8 7 6 5 4 3 2 1; do echo $num; done']
+        resources: {}
+      # restartPolicy: OnFailure
+      restartPolicy: Never

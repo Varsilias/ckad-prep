@@ -1,0 +1,8 @@
+selector:
+  matchLabels: # Equality based selector - E.G "=", "==", "!="
+    component: redis
+  matchExpression: # Set based selector - E.G: "env in (dev, prod)", "tier notin (frontend)", "! env"
+    - {key: tier, operator: In, values: [cache]} # equivalent of kubectl get po|svc --selector "tier in (cache)"
+    - {key: environment, operator: NotIn, values: [dev]}  # equivalent of kubectl get po|svc --selector "environment notin (dev)"
+    - {key: release, operator: DoesNotExists}  # equivalent of kubectl get po|svc --selector "! release"
+    - {key: upgrade, operator: Exists}  # equivalent of kubectl get po|svc --selector "upgrade"

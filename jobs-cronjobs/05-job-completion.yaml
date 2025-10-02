@@ -1,0 +1,15 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: counter-job
+spec:
+  completions: 3
+  template:
+    spec:
+      containers:
+      - image: busybox
+        name: counter-job
+        command: ["/bin/sh"]
+        args: ["-c", 'date; echo sleeping; sleep 2s; echo exiting']
+        resources: {}
+      restartPolicy: OnFailure

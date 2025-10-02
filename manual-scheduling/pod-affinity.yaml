@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-with-node-affinity
+  labels:
+    app: nginx
+spec:
+  containers:
+  - image: nginx
+    name: nginx
+    ports:
+    - containerPort: 80
+    resources: {}
+  affinity:
+    nodeAffinity: 
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+            # - key: gpu
+            #   operator: Exists
+            - key: disk
+              operator: In
+              values:
+                - ssd
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pause-with-pod-affinity
+spec:
+  containers:
+  - image: registry.k8s.io/pause:3.8
+    name: with-pod-affinity
+    resources: {}
+  affinity:
+    podAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+              - key: app
+                operator: In
+                values: ["nginx"]
+          topologyKey: gpu

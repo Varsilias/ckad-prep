@@ -1,0 +1,32 @@
+{{define "todo.html"}}
+<div class="todo space-y-2" id="todo-{{.ID}}">
+    <h1 class="text-base font-bold">{{.ID}} | {{.Title}}</h1>
+    <div class="flex space-x-2">
+        {{if .Completed}}
+        <div class="px-4 py-2 bg-green-500 text-white rounded-sm" style="background-color: green;">Completed</div>
+        <button class="px-4 py-2 bg-yellow-500 text-white rounded-sm cursor-pointer" hx-patch="/ui/todo/{{.ID}}"
+            hx-vals='{"completed": false}'  hx-target="#todo-{{.ID}}"  hx-swap="outerHTML">
+            Mark Incomplete
+        </button>
+        {{else}}
+        <div class="px-4 py-2 bg-gray-300 text-gray-500 rounded-sm">Not Complete</div>
+        <button 
+            class="px-4 py-2 bg-blue-500 text-white rounded-sm cursor-pointer" 
+            hx-patch="/ui/todo/{{.ID}}"
+            hx-vals='{"completed": true}' 
+            hx-target="#todo-{{.ID}}" 
+            hx-swap="outerHTML">
+            Mark Complete
+        </button>
+        {{end}}
+
+        <button 
+            class="px-4 py-2 bg-red-500 text-white rounded-sm cursor-pointer"
+            hx-delete="/ui/todo/{{.ID}}"
+            hx-target="#todo-{{.ID}}" 
+            hx-swap="delete">
+            Delete
+        </button>
+    </div>
+</div>
+{{end}}
