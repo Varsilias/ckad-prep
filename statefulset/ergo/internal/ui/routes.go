@@ -2,6 +2,7 @@ package ui
 
 import (
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 
@@ -35,7 +36,12 @@ func (u *UI) Home(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "an error occured", http.StatusInternalServerError)
 		return
 	}
-	u.render(w, "home.html", map[string]any{"Todos": todos}, http.StatusOK)
+
+	hostname := os.Getenv("HOSTNAME")
+	if hostname == "" {
+		hostname = "default"
+	}
+	u.render(w, "home.html", map[string]any{"Todos": todos, "Hostname": hostname}, http.StatusOK)
 }
 
 func (u *UI) TodoPost(w http.ResponseWriter, r *http.Request) {
