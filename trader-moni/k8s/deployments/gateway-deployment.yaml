@@ -1,0 +1,106 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-service
+  namespace: trader-moni
+  labels:
+    app: gateway-service
+    tier: gateway
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway-service
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: gateway-service
+        tier: gateway
+    spec:
+      containers:
+      - name: gateway-service
+        image: trader-moni/gateway-service:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        env:
+          - name: PORT
+            valueFrom:
+              configMapKeyRef:
+                name: gateway-config
+                key: PORT
+          - name: SERVICE_NAME
+            valueFrom:
+              configMapKeyRef:
+                name: gateway-config
+                key: SERVICE_NAME
+          - name: SERVICE_VERSION
+            valueFrom:
+              configMapKeyRef:
+                name: gateway-config
+                key: SERVICE_VERSION
+          - name: USER_SERVICE_URL
+            valueFrom:
+              configMapKeyRef:
+                name: gateway-config
+                key: USER_SERVICE_URL
+          - name: ORDER_SERVICE_URL
+            valueFrom:
+              configMapKeyRef:
+                name: gateway-config
+                key: ORDER_SERVICE_URL
+          - name: PAYMENT_SERVICE_URL
+            valueFrom:
+              configMapKeyRef:
+                name: gateway-config
+                key: PAYMENT_SERVICE_URL
+          - name: NOTIFICATION_SERVICE_URL
+            valueFrom:
+              configMapKeyRef:
+                name: gateway-config
+                key: NOTIFICATION_SERVICE_URL
+          - name: JWT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: app-secrets
+                key: JWT_SECRET
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 65534
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+              - ALL
+status: {}

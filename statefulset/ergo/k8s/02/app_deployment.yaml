@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ergo
+  labels:
+    app: ergo
+spec:
+  ports:
+  - name: 80-8080
+    port: 80
+    protocol: TCP
+    targetPort: 8080
+    nodePort: 31000
+  selector:
+    app: ergo
+  type: NodePort
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: ergo
+  name: ergo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ergo
+  template:
+    metadata:
+      labels:
+        app: ergo
+    spec:
+      containers:
+      - image: varsilias/ergo
+        name: ergo
+        imagePullPolicy: Always
+        env:
+          - name: DSN
+            value: "root:root@tcp(mysql-primary.default.svc.cluster.local:3306)/ergo?charset=utf8mb4&parseTime=True&loc=Local"
+        ports:
+          - containerPort: 8080
+        resources: {}

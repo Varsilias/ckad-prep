@@ -174,18 +174,37 @@ auth:
 ##      echo "Do something."
 ##
 initdbScripts:
+  # my_init_script.sh: |
+  #   #!/bin/bash
+  #   mysql -P 3306 -uroot -proot ergo -e "
+  #   CREATE DATABASE IF NOT EXISTS ergo;
+  #   USE ergo;
+  #   CREATE TABLE todos (
+  #       id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  #       title VARCHAR(255) NOT NULL,
+  #       completed BOOLEAN NOT NULL DEFAULT FALSE,
+  #       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  #       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  #   );"
+
   my_init_script.sh: |
     #!/bin/bash
-    mysql -P 3306 -uroot -proot ergo -e "
-    CREATE DATABASE IF NOT EXISTS ergo;
-    USE ergo;
-    CREATE TABLE todos (
-        id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-        title VARCHAR(255) NOT NULL,
-        completed BOOLEAN NOT NULL DEFAULT FALSE,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-    );"
+    # Only run on primary
+    if [ -z "$MYSQL_REPLICATION_MODE" ] || [ "$MYSQL_REPLICATION_MODE" = "master" ]; then
+      mysql -P 3306 -uroot -proot ergo -e "
+      CREATE DATABASE IF NOT EXISTS ergo;
+      USE ergo;
+      CREATE TABLE IF NOT EXISTS todos (
+          id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+          title VARCHAR(255) NOT NULL,
+          completed BOOLEAN NOT NULL DEFAULT FALSE,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      );"
+    else
+      echo "Skipping init script on secondary replica"
+    fi
+
 ## @param initdbScriptsConfigMap ConfigMap with the initdb scripts (Note: Overrides `initdbScripts`)
 ##
 initdbScriptsConfigMap: ""
@@ -936,13 +955,59 @@ secondary:
     successThreshold: 1
   ## @param secondary.customLivenessProbe Override default liveness probe for MySQL secondary containers
   ##
-  customLivenessProbe: {}
-  ## @param secondary.customReadinessProbe Override default readiness probe for MySQL secondary containers
-  ##
-  customReadinessProbe: {}
-  ## @param secondary.customStartupProbe Override default startup probe for MySQL secondary containers
-  ##
-  customStartupProbe: {}
+# Override the default startup probe
+  customStartupProbe:
+    exec:
+      command:
+        - /bin/bash
+        - -ec
+        - |
+          password_aux="${MYSQL_REPLICATION_PASSWORD:-}"
+          if [[ -f "/opt/bitnami/mysql/secrets/mysql-replication-password" ]]; then
+              password_aux=$(cat "/opt/bitnami/mysql/secrets/mysql-replication-password")
+          fi
+          mysqladmin ping -u{{ .Values.auth.replicationUser }} -p"${password_aux}"
+    initialDelaySeconds: 15
+    periodSeconds: 10
+    timeoutSeconds: 1
+    failureThreshold: 10
+    successThreshold: 1
+  
+  # Override the default readiness probe
+  customReadinessProbe:
+    exec:
+      command:
+        - /bin/bash
+        - -ec
+        - |
+          password_aux="${MYSQL_REPLICATION_PASSWORD:-}"
+          if [[ -f "/opt/bitnami/mysql/secrets/mysql-replication-password" ]]; then
+              password_aux=$(cat "/opt/bitnami/mysql/secrets/mysql-replication-password")
+          fi
+          mysqladmin ping -u{{ .Values.auth.replicationUser }} -p"${password_aux}"
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    timeoutSeconds: 1
+    failureThreshold: 3
+    successThreshold: 1
+  
+  # Override the default liveness probe
+  customLivenessProbe:
+    exec:
+      command:
+        - /bin/bash
+        - -ec
+        - |
+          password_aux="${MYSQL_REPLICATION_PASSWORD:-}"
+          if [[ -f "/opt/bitnami/mysql/secrets/mysql-replication-password" ]]; then
+              password_aux=$(cat "/opt/bitnami/mysql/secrets/mysql-replication-password")
+          fi
+          mysqladmin ping -u{{ .Values.auth.replicationUser }} -p"${password_aux}"
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    timeoutSeconds: 1
+    failureThreshold: 3
+    successThreshold: 1
   ## @param secondary.extraFlags MySQL secondary additional command line flags
   ## Can be used to specify command line flags, for example:
   ## E.g.
