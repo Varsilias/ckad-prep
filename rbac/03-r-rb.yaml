@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: monitoring
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: monitoring-sa
+  namespace: monitoring
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: r-monitoring
+  namespace: monitoring
+rules:
+- apiGroups: ["*"] # "" indicates the core API group
+  resources: ["*"]
+  verbs: ["get", "watch", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: rbk-monitoring
+  namespace: monitoring
+roleRef:
+  apiGroup: ""
+  kind: Role
+  name: r-monitoring
+subjects:
+- apiGroup: ""
+  kind: ServiceAccount
+  name: monitoring-sa
+  namespace: monitoring
